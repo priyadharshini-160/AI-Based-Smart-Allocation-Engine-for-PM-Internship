@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Internships</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">🤖</div>
+
+        <h2>AI Allocation</h2>
+
+        <p class="sidebar-subtitle">
+            PM Internship Scheme
+        </p>
+
+        <nav>
+
+            <a href="dashboard.html"
+               class="nav-link">
+                🏠 Dashboard
+            </a>
+
+            <a href="students.html"
+               class="nav-link student-only">
+                🎓 My Profile
+            </a>
+
+            <a href="companies.html"
+               class="nav-link company-only">
+                🏢 Company Profile
+            </a>
+
+            <a href="internships.html"
+               class="nav-link active">
+                💼 Internships
+            </a>
+
+            <a href="allocation.html"
+               class="nav-link">
+                🤖 AI Allocation
+            </a>
+
+            <a href="reports.html"
+               class="nav-link">
+                📊 Reports
+            </a>
+
+        </nav>
+
+        <button onclick="logout()" class="logout-btn">
+            🚪 Logout
+        </button>
+
+    </aside>
+
+
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>Internships</h1>
+
+                <p>
+                    Explore and manage internship opportunities
+                </p>
+
+            </div>
+
+        </header>
+
+
+        <!-- COMPANY FORM -->
+
+        <section
+            id="internshipFormSection"
+            class="section-card"
+            style="display:none;">
+
+            <h2>Add Internship</h2>
+
+            <div id="internshipMessage"
+                 class="message">
+            </div>
+
+
+            <form id="internshipForm">
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Internship Title
+                        </label>
+
+                        <input
+                            type="text"
+                            id="internshipTitle"
+                            placeholder="Python Developer Intern"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Domain
+                        </label>
+
+                        <input
+                            type="text"
+                            id="internshipDomain"
+                            placeholder="Python / AI / Web Development"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Required Skills
+                        </label>
+
+                        <input
+                            type="text"
+                            id="requiredSkills"
+                            placeholder="Python, SQL, ML"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Location
+                        </label>
+
+                        <input
+                            type="text"
+                            id="internshipLocation"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Duration
+                        </label>
+
+                        <input
+                            type="text"
+                            id="duration"
+                            placeholder="3 Months"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Stipend
+                        </label>
+
+                        <input
+                            type="number"
+                            id="stipend"
+                            placeholder="10000"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Minimum CGPA
+                        </label>
+
+                        <input
+                            type="number"
+                            id="minimumCgpa"
+                            min="0"
+                            max="10"
+                            step="0.1"
+                            value="0"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="primary-btn">
+
+                    Add Internship
+
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- INTERNSHIPS -->
+
+        <section class="section-card"
+                 style="margin-top:25px;">
+
+            <h2>Available Internships</h2>
+
+            <div id="internshipList"
+                 class="internship-list">
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script src="js/common.js"></script>
+<script src="js/internships.js"></script>
+
+</body>
+
+</html>

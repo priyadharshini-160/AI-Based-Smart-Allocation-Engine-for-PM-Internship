@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Reports</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">🤖</div>
+
+        <h2>AI Allocation</h2>
+
+        <p class="sidebar-subtitle">
+            PM Internship Scheme
+        </p>
+
+        <nav>
+
+            <a href="dashboard.html"
+               class="nav-link">
+                🏠 Dashboard
+            </a>
+
+            <a href="students.html"
+               class="nav-link student-only">
+                🎓 My Profile
+            </a>
+
+            <a href="companies.html"
+               class="nav-link company-only">
+                🏢 Company Profile
+            </a>
+
+            <a href="internships.html"
+               class="nav-link">
+                💼 Internships
+            </a>
+
+            <a href="allocation.html"
+               class="nav-link">
+                🤖 AI Allocation
+            </a>
+
+            <a href="reports.html"
+               class="nav-link active">
+                📊 Reports
+            </a>
+
+        </nav>
+
+        <button onclick="logout()" class="logout-btn">
+            🚪 Logout
+        </button>
+
+    </aside>
+
+
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>Allocation Reports</h1>
+
+                <p>
+                    View AI-based internship allocation results
+                </p>
+
+            </div>
+
+        </header>
+
+
+        <section class="stats-grid">
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🎓
+                </div>
+
+                <div>
+
+                    <h3 id="reportStudents">
+                        0
+                    </h3>
+
+                    <p>Students</p>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    💼
+                </div>
+
+                <div>
+
+                    <h3 id="reportInternships">
+                        0
+                    </h3>
+
+                    <p>Internships</p>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🤖
+                </div>
+
+                <div>
+
+                    <h3 id="reportAllocations">
+                        0
+                    </h3>
+
+                    <p>Allocations</p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="section-card">
+
+            <h2>Allocation Results</h2>
+
+            <div id="reportTableContainer">
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script src="js/common.js"></script>
+<script src="js/reports.js"></script>
+
+</body>
+
+</html>

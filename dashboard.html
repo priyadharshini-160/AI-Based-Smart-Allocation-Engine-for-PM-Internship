@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard - AI Smart Allocation Engine</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            🤖
+        </div>
+
+        <h2>AI Allocation</h2>
+
+        <p class="sidebar-subtitle">
+            PM Internship Scheme
+        </p>
+
+
+        <nav>
+
+            <a href="dashboard.html" class="nav-link active">
+                🏠 Dashboard
+            </a>
+
+            <a href="students.html"
+               class="nav-link student-only">
+                🎓 My Profile
+            </a>
+
+            <a href="internships.html"
+               class="nav-link">
+                💼 Internships
+            </a>
+
+            <a href="companies.html"
+               class="nav-link company-only">
+                🏢 Company Profile
+            </a>
+
+            <a href="allocation.html"
+               class="nav-link">
+                🤖 AI Allocation
+            </a>
+
+            <a href="reports.html"
+               class="nav-link">
+                📊 Reports
+            </a>
+
+        </nav>
+
+
+        <button onclick="logout()" class="logout-btn">
+            🚪 Logout
+        </button>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+                <h1>Dashboard</h1>
+                <p>AI-Based Smart Allocation Engine</p>
+            </div>
+
+            <div class="user-info">
+
+                <div class="user-avatar">
+                    👤
+                </div>
+
+                <div>
+                    <strong id="userName"></strong>
+                    <small id="userRole"></small>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- WELCOME -->
+
+        <section class="welcome-card">
+
+            <div>
+
+                <h2>
+                    Welcome, <span id="welcomeName"></span> 👋
+                </h2>
+
+                <p id="welcomeText">
+                    Manage your internship allocation easily
+                    using AI-powered matching.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- STATISTICS -->
+
+        <section class="stats-grid">
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🎓
+                </div>
+
+                <div>
+
+                    <h3 id="studentCount">
+                        0
+                    </h3>
+
+                    <p>Students</p>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🏢
+                </div>
+
+                <div>
+
+                    <h3 id="companyCount">
+                        0
+                    </h3>
+
+                    <p>Companies</p>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    💼
+                </div>
+
+                <div>
+
+                    <h3 id="internshipCount">
+                        0
+                    </h3>
+
+                    <p>Internships</p>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🤖
+                </div>
+
+                <div>
+
+                    <h3 id="allocationCount">
+                        0
+                    </h3>
+
+                    <p>Allocations</p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- QUICK ACTIONS -->
+
+        <section class="section-card">
+
+            <h2>Quick Actions</h2>
+
+            <div class="quick-actions">
+
+                <a href="students.html"
+                   class="action-card student-only">
+
+                    <span>🎓</span>
+
+                    <div>
+                        <h3>Student Profile</h3>
+                        <p>Add or update your academic details.</p>
+                    </div>
+
+                </a>
+
+
+                <a href="companies.html"
+                   class="action-card company-only">
+
+                    <span>🏢</span>
+
+                    <div>
+                        <h3>Company Profile</h3>
+                        <p>Add your company details.</p>
+                    </div>
+
+                </a>
+
+
+                <a href="internships.html"
+                   class="action-card">
+
+                    <span>💼</span>
+
+                    <div>
+                        <h3>Internships</h3>
+                        <p>View or add internship opportunities.</p>
+                    </div>
+
+                </a>
+
+
+                <a href="allocation.html"
+                   class="action-card">
+
+                    <span>🤖</span>
+
+                    <div>
+                        <h3>AI Allocation</h3>
+                        <p>Find the best internship matches.</p>
+                    </div>
+
+                </a>
+
+
+                <a href="reports.html"
+                   class="action-card">
+
+                    <span>📊</span>
+
+                    <div>
+                        <h3>Reports</h3>
+                        <p>View allocation results.</p>
+                    </div>
+
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script src="js/common.js"></script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    if (!checkLogin()) {
+        return;
+    }
+
+    const user = getCurrentUser();
+
+    if (!user) {
+        return;
+    }
+
+    document.getElementById("userName").textContent =
+        user.name;
+
+    document.getElementById("welcomeName").textContent =
+        user.name;
+
+    document.getElementById("userRole").textContent =
+        user.role.toUpperCase();
+
+
+    /* ROLE CONTROL */
+
+    if (user.role === "student") {
+
+        document.querySelectorAll(".company-only")
+            .forEach(function (element) {
+                element.style.display = "none";
+            });
+
+        document.getElementById("welcomeText").textContent =
+            "Build your profile, explore internships and get AI-powered internship recommendations.";
+
+    }
+
+
+    if (user.role === "company") {
+
+        document.querySelectorAll(".student-only")
+            .forEach(function (element) {
+                element.style.display = "none";
+            });
+
+        document.getElementById("welcomeText").textContent =
+            "Manage your company, publish internships and find suitable student candidates.";
+
+    }
+
+
+    /* COUNTS */
+
+    document.getElementById("studentCount").textContent =
+        getStudents().length;
+
+    document.getElementById("companyCount").textContent =
+        getCompanies().length;
+
+    document.getElementById("internshipCount").textContent =
+        getInternships().length;
+
+    document.getElementById("allocationCount").textContent =
+        getAllocations().length;
+
+});
+
+</script>
+
+</body>
+</html>
