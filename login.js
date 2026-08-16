@@ -1,240 +1,214 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-    console.log("Login page loaded");
+    console.log("=================================");
+    console.log("AI Allocation Engine Login");
+    console.log("Login JavaScript loaded successfully");
+    console.log("=================================");
 
-
-    const loginForm =
-        document.getElementById("loginForm");
-
+    const loginForm = document.getElementById("loginForm");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const loginButton = document.getElementById("loginButton");
 
     if (!loginForm) {
-
-        console.error(
-            "ERROR: loginForm was not found."
-        );
-
+        console.error("Login form not found.");
         return;
     }
 
+    if (!emailInput) {
+        console.error("Email input not found.");
+        return;
+    }
 
-    loginForm.addEventListener(
-        "submit",
-        function (event) {
+    if (!passwordInput) {
+        console.error("Password input not found.");
+        return;
+    }
 
-            event.preventDefault();
+    if (!loginButton) {
+        console.error("Login button not found.");
+        return;
+    }
 
-            console.log("Login button clicked");
+    loginForm.addEventListener("submit", function (event) {
 
+        event.preventDefault();
 
-            const emailInput =
-                document.getElementById("email");
+        console.log("Login button clicked");
 
+        const email = emailInput.value.trim().toLowerCase();
+        const password = passwordInput.value;
 
-            const passwordInput =
-                document.getElementById("password");
+        // -----------------------------
+        // VALIDATION
+        // -----------------------------
 
+        if (email === "") {
 
-            const message =
-                document.getElementById("loginMessage");
+            showLoginMessage(
+                "Please enter your email address.",
+                "error"
+            );
 
+            emailInput.focus();
+            return;
+        }
 
-            if (!emailInput || !passwordInput) {
+        if (password === "") {
 
-                console.error(
-                    "Email or password field not found."
-                );
+            showLoginMessage(
+                "Please enter your password.",
+                "error"
+            );
 
-                return;
+            passwordInput.focus();
+            return;
+        }
+
+        // -----------------------------
+        // READ REGISTERED USERS
+        // -----------------------------
+
+        let users = [];
+
+        try {
+
+            const storedUsers = localStorage.getItem("users");
+
+            if (storedUsers) {
+                users = JSON.parse(storedUsers);
             }
 
+            if (!Array.isArray(users)) {
+                users = [];
+            }
 
-            const email =
-                emailInput.value
+        } catch (error) {
+
+            console.error("Error reading users:", error);
+
+            showLoginMessage(
+                "Unable to read registered users.",
+                "error"
+            );
+
+            return;
+        }
+
+        console.log("Users found:", users.length);
+
+        // -----------------------------
+        // CHECK USER
+        // -----------------------------
+
+        const user = users.find(function (registeredUser) {
+
+            if (!registeredUser) {
+                return false;
+            }
+
+            const registeredEmail =
+                String(registeredUser.email || "")
                     .trim()
                     .toLowerCase();
 
+            const registeredPassword =
+                String(registeredUser.password || "");
 
-            const password =
-                passwordInput.value;
-
-
-            /* ==============================
-               VALIDATION
-            ============================== */
-
-            if (email === "") {
-
-                showLoginMessage(
-                    "Please enter your email address.",
-                    "error"
-                );
-
-                emailInput.focus();
-
-                return;
-            }
-
-
-            if (password === "") {
-
-                showLoginMessage(
-                    "Please enter your password.",
-                    "error"
-                );
-
-                passwordInput.focus();
-
-                return;
-            }
-
-
-            /* ==============================
-               GET REGISTERED USERS
-            ============================== */
-
-            let users = [];
-
-
-            try {
-
-                users =
-                    JSON.parse(
-                        localStorage.getItem("users")
-                    ) || [];
-
-            } catch (error) {
-
-                console.error(
-                    "Unable to read users:",
-                    error
-                );
-
-                users = [];
-
-            }
-
-
-            console.log(
-                "Registered users:",
-                users
+            return (
+                registeredEmail === email &&
+                registeredPassword === password
             );
 
+        });
 
-            /* ==============================
-               FIND USER
-            ============================== */
+        // -----------------------------
+        // INVALID LOGIN
+        // -----------------------------
 
-            const user =
-                users.find(
-                    function (registeredUser) {
+        if (!user) {
 
-                        return (
-                            registeredUser.email
-                                .toLowerCase()
-                                === email
-                            &&
-                            registeredUser.password
-                                === password
-                        );
+            console.log("Login failed");
 
-                    }
-                );
-
-
-            /* ==============================
-               USER NOT FOUND
-            ============================== */
-
-            if (!user) {
-
-                showLoginMessage(
-                    "Invalid email or password. Please register first.",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            /* ==============================
-               LOGIN SUCCESS
-            ============================== */
-
-            console.log(
-                "Login successful:",
-                user
+            showLoginMessage(
+                "Invalid email or password. Please register first.",
+                "error"
             );
 
+            return;
+        }
 
-            /*
-             * Store complete logged-in user
-             */
+        // -----------------------------
+        // LOGIN SUCCESS
+        // -----------------------------
+
+        console.log("Login successful:", user);
+
+        try {
 
             localStorage.setItem(
                 "currentUser",
                 JSON.stringify(user)
             );
 
-
             localStorage.setItem(
                 "isLoggedIn",
                 "true"
             );
 
+        } catch (error) {
 
-            /* ==============================
-               SUCCESS MESSAGE
-            ============================== */
+            console.error(
+                "Unable to save login session:",
+                error
+            );
 
             showLoginMessage(
-                "Login successful! Opening dashboard...",
-                "success"
+                "Unable to create login session.",
+                "error"
             );
 
-
-            /*
-             * Small delay so user can see
-             * the success message.
-             */
-
-            setTimeout(
-                function () {
-
-                    window.location.href =
-                        "dashboard.html";
-
-                },
-                700
-            );
-
+            return;
         }
-    );
+
+        showLoginMessage(
+            "Login successful! Opening dashboard...",
+            "success"
+        );
+
+        loginButton.disabled = true;
+        loginButton.textContent = "Opening Dashboard...";
+
+        // -----------------------------
+        // OPEN DASHBOARD
+        // -----------------------------
+
+        setTimeout(function () {
+
+            window.location.href = "./dashboard.html";
+
+        }, 700);
+
+    });
 
 });
 
 
-/* =====================================================
+/* ==========================================
    SHOW LOGIN MESSAGE
-===================================================== */
+========================================== */
 
 function showLoginMessage(text, type) {
 
     const message =
-        document.getElementById(
-            "loginMessage"
-        );
-
+        document.getElementById("loginMessage");
 
     if (!message) {
         return;
     }
 
+    message.textContent = text;
 
-    message.textContent =
-        text;
-
-
-    message.className =
-        "message " + type;
+    message.className = "message " + type;
 
 }
