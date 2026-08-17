@@ -1,148 +1,119 @@
+/* =========================================================
+   AI SMART ALLOCATION ENGINE
+   reports.js
+   ========================================================= */
+
 document.addEventListener("DOMContentLoaded", function () {
 
-    if (!checkLogin()) {
-        return;
-    }
-
-
-    const user =
-        getCurrentUser();
-
-
-    if (user.role === "student") {
-
-        document.querySelectorAll(".company-only")
-            .forEach(function (element) {
-                element.style.display = "none";
-            });
-
-    }
-
-
-    if (user.role === "company") {
-
-        document.querySelectorAll(".student-only")
-            .forEach(function (element) {
-                element.style.display = "none";
-            });
-
-    }
-
+    console.log("Reports page loaded");
 
     loadReports();
 
 });
 
 
+/* =========================================================
+   GET ARRAY FROM LOCAL STORAGE
+   ========================================================= */
+
+function getReportArray(key) {
+
+    try {
+
+        const data = localStorage.getItem(key);
+
+        if (!data) {
+            return [];
+        }
+
+        const parsed = JSON.parse(data);
+
+        return Array.isArray(parsed) ? parsed : [];
+
+    } catch (error) {
+
+        console.error(
+            "Error reading " + key + ":",
+            error
+        );
+
+        return [];
+
+    }
+
+}
+
+
+/* =========================================================
+   LOAD REPORTS
+   ========================================================= */
+
 function loadReports() {
 
-    const user =
-        getCurrentUser();
-
-
     const students =
-        getStudents();
-
+        getReportArray("students");
 
     const internships =
-        getInternships();
+        getReportArray("internships");
+
+    const allocations =
+        getReportArray("allocations");
 
 
-    let allocations =
-        getAllocations();
+    console.log("Students:", students);
+
+    console.log("Internships:", internships);
+
+    console.log("Allocations:", allocations);
 
 
-    /* STUDENT SEES OWN */
+    /* =====================================================
+       UPDATE SUMMARY CARDS
+       ===================================================== */
 
-    if (user.role === "student") {
+    const studentCount =
+        document.getElementById(
+            "reportStudents"
+        );
 
-        const student =
-            students.find(function (item) {
+    const internshipCount =
+        document.getElementById(
+            "reportInternships"
+        );
 
-                return item.userId === user.id;
-
-            });
-
-
-        if (student) {
-
-            allocations =
-                allocations.filter(
-                    function (allocation) {
-
-                        return (
-                            allocation.studentId
-                            === student.id
-                        );
-
-                    }
-                );
-
-        } else {
-
-            allocations = [];
-
-        }
-
-    }
+    const allocationCount =
+        document.getElementById(
+            "reportAllocations"
+        );
 
 
-    /* COMPANY SEES OWN */
+    if (studentCount) {
 
-    if (user.role === "company") {
-
-        const companies =
-            getCompanies();
-
-
-        const company =
-            companies.find(function (item) {
-
-                return item.userId === user.id;
-
-            });
-
-
-        if (company) {
-
-            allocations =
-                allocations.filter(
-                    function (allocation) {
-
-                        return (
-                            allocation.companyId
-                            === company.id
-                        );
-
-                    }
-                );
-
-        } else {
-
-            allocations = [];
-
-        }
+        studentCount.textContent =
+            students.length;
 
     }
 
 
-    document.getElementById(
-        "reportStudents"
-    ).textContent =
-        students.length;
+    if (internshipCount) {
+
+        internshipCount.textContent =
+            internships.length;
+
+    }
 
 
-    document.getElementById(
-        "reportInternships"
-    ).textContent =
-        internships.length;
+    if (allocationCount) {
+
+        allocationCount.textContent =
+            allocations.length;
+
+    }
 
 
-    document.getElementById(
-        "reportAllocations"
-    ).textContent =
-        allocations.length;
-
+    /* =====================================================
+       DISPLAY ALLOCATION TABLE
+       ===================================================== */
 
     displayReportTable(
         allocations
@@ -151,9 +122,11 @@ function loadReports() {
 }
 
 
-function displayReportTable(
-    allocations
-) {
+/* =========================================================
+   DISPLAY REPORT TABLE
+   ========================================================= */
+
+function displayReportTable(allocations) {
 
     const container =
         document.getElementById(
@@ -161,21 +134,50 @@ function displayReportTable(
         );
 
 
-    if (allocations.length === 0) {
+    if (!container) {
+
+        console.error(
+            "reportTableContainer not found."
+        );
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       NO ALLOCATIONS
+       ===================================================== */
+
+    if (
+        !Array.isArray(allocations) ||
+        allocations.length === 0
+    ) {
 
         container.innerHTML = `
+
             <div class="empty-state">
-                <h3>No allocations yet</h3>
+
+                <h3>
+                    No allocations yet
+                </h3>
+
                 <p>
                     AI allocation results will appear here.
                 </p>
+
             </div>
+
         `;
 
         return;
 
     }
 
+
+    /* =====================================================
+       ALLOCATION TABLE
+       ===================================================== */
 
     let html = `
 
@@ -187,15 +189,25 @@ function displayReportTable(
 
                     <tr>
 
-                        <th>Student</th>
+                        <th>
+                            Student
+                        </th>
 
-                        <th>Internship</th>
+                        <th>
+                            Internship
+                        </th>
 
-                        <th>Company</th>
+                        <th>
+                            Company
+                        </th>
 
-                        <th>AI Score</th>
+                        <th>
+                            AI Score
+                        </th>
 
-                        <th>Status</th>
+                        <th>
+                            Status
+                        </th>
 
                     </tr>
 
@@ -206,53 +218,85 @@ function displayReportTable(
     `;
 
 
-    allocations.forEach(
-        function (allocation) {
+    allocations.forEach(function (allocation) {
 
-            html += `
+        const studentName =
+            allocation.studentName ||
+            allocation.name ||
+            "Student";
 
-                <tr>
 
-                    <td>
-                        ${escapeHTML(
-                            allocation.studentName
+        const internshipTitle =
+            allocation.internshipTitle ||
+            allocation.title ||
+            allocation.internshipName ||
+            "Internship";
+
+
+        const companyName =
+            allocation.companyName ||
+            allocation.company ||
+            "Company";
+
+
+        const score =
+            allocation.score ??
+            allocation.matchScore ??
+            0;
+
+
+        const status =
+            allocation.status ||
+            "Allocated";
+
+
+        html += `
+
+            <tr>
+
+                <td>
+                    ${escapeReportHTML(
+                        studentName
+                    )}
+                </td>
+
+                <td>
+                    ${escapeReportHTML(
+                        internshipTitle
+                    )}
+                </td>
+
+                <td>
+                    ${escapeReportHTML(
+                        companyName
+                    )}
+                </td>
+
+                <td>
+
+                    <strong>
+                        ${score}%
+                    </strong>
+
+                </td>
+
+                <td>
+
+                    <span class="status-success">
+
+                        ${escapeReportHTML(
+                            status
                         )}
-                    </td>
 
-                    <td>
-                        ${escapeHTML(
-                            allocation.internshipTitle
-                        )}
-                    </td>
+                    </span>
 
-                    <td>
-                        ${escapeHTML(
-                            allocation.companyName
-                        )}
-                    </td>
+                </td>
 
-                    <td>
-                        <strong>
-                            ${allocation.score}%
-                        </strong>
-                    </td>
+            </tr>
 
-                    <td>
+        `;
 
-                        <span class="status-success">
-                            ${escapeHTML(
-                                allocation.status
-                            )}
-                        </span>
-
-                    </td>
-
-                </tr>
-
-            `;
-
-        }
-    );
+    });
 
 
     html += `
@@ -266,18 +310,53 @@ function displayReportTable(
     `;
 
 
-    container.innerHTML = html;
+    container.innerHTML =
+        html;
 
 }
 
 
-function escapeHTML(value) {
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
+
+function escapeReportHTML(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "";
+
+    }
+
 
     return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
